@@ -80,65 +80,77 @@ def load_data(filename):
     Weekend = []
     Revenue = []
 
-    evidence = [
-        Administrative, Administrative_Duration, Informational, Informational_Duration, ProductRelated, ProductRelated_Duration, 
-    BounceRates, ExitRates, PageValues, SpecialDay, Month, OperatingSystems, Browser,Region, TrafficType, VisitorType, Weekend
-    ]
+    #evidence = [
+    #    Administrative, Administrative_Duration, Informational, Informational_Duration, ProductRelated, ProductRelated_Duration, 
+    #BounceRates, ExitRates, PageValues, SpecialDay, Month, OperatingSystems, Browser,Region, TrafficType, VisitorType, Weekend
+    #]
 
-    file = csv.DictReader(filename)
+    data_point = []
+
+    csv_file = open(filename, 'r')
+    file = csv.DictReader(csv_file)
     for column in file:
-        for i in range(len(evidence)):
-            if col_list[i] == Month:
-                print("going tru month")
+        evidence = []
+        for i in range(len(col_list)):
+            if col_list[i] == "Month":
+                #print("going tru month")
+                #print(column[col_list[i]])
                 if column[col_list[i]] == "Jan":
-                    evidence[i].append(0)
-                if column[col_list[i]] == "Feb":
-                    evidence[i].append(1)
-                if column[col_list[i]] == "Mar":
-                    evidence[i].append(2)
-                if column[col_list[i]] == "Apr":
-                    evidence[i].append(3)
-                if column[col_list[i]] == "May":
-                    evidence[i].append(4)
-                if column[col_list[i]] == "June":
-                    evidence[i].append(5)
-                if column[col_list[i]] == "Jul":
-                    evidence[i].append(6)
-                if column[col_list[i]] == "Aug":
-                    evidence[i].append(7)
-                if column[col_list[i]] == "Sep":
-                    evidence[i].append(8)
-                if column[col_list[i]] == "Oct":
-                    evidence[i].append(9)
-                if column[col_list[i]] == "Nov":
-                    evidence[i].append(10)
-                if column[col_list[i]] == "Dec":
-                    evidence[i].append(11)
+                    evidence.append(0)
+                elif column[col_list[i]] == "Feb":
+                    evidence.append(1)
+                elif column[col_list[i]] == "Mar":
+                    evidence.append(2)
+                elif column[col_list[i]] == "Apr":
+                    evidence.append(3)
+                elif column[col_list[i]] == "May":
+                    evidence.append(4)
+                elif column[col_list[i]] == "June":
+                    evidence.append(5)
+                elif column[col_list[i]] == "Jul":
+                    evidence.append(6)
+                elif column[col_list[i]] == "Aug":
+                    evidence.append(7)
+                elif column[col_list[i]] == "Sep":
+                    evidence.append(8)
+                elif column[col_list[i]] == "Oct":
+                    evidence.append(9)
+                elif column[col_list[i]] == "Nov":
+                    evidence.append(10)
+                elif column[col_list[i]] == "Dec":
+                    evidence.append(11)
 
-            elif col_list[i] == VisitorType:
+            elif col_list[i] == "VisitorType":
                 if column[col_list[i]] == "Returning_Visitor":
-                    evidence[i].append(1)
+                    evidence.append(1)
                 else:
-                    evidence[i].append(0)
+                    evidence.append(0)
 
-            elif col_list[i] == Weekend:
+            elif col_list[i] == "Weekend":
                 if column[col_list[i]] == "FALSE":
-                    evidence[i].append(0)
+                    evidence.append(0)
                 else:
-                    evidence[i].append(1)
+                    evidence.append(1)
+
+            elif col_list[i] == "Revenue":
+                #print("intu revenu")
+                if column['Revenue'] == "FALSE":
+                    #print("revenu")
+                    Revenue.append(0)
+                else:
+                    #print("revenu")
+                    Revenue.append(1)
 
             else:
-                print("going tru", col_list[i])
-                evidence[i].append(column[col_list[i]])
-            print("end")
-
-    for lbl in file:
-        if lbl['Revenue'] == "FALSE":
-            Revenue.append(0)
-        else:
-            Revenue.append(1)
+                #print("going tru", col_list[i])
+                evidence.append(column[col_list[i]])
+            #print("end")
+        data_point.append(evidence)
+    #for i in range(len(evidence)):
+    #print(len(data_point))
+    #print(len(Revenue))
             
-    return evidence, Revenue
+    return data_point, Revenue
 
 
 def train_model(evidence, labels):
@@ -169,7 +181,9 @@ def evaluate(labels, predictions):
     """
     sen_count = 0
     spec_count = 0
-    for l, p in labels, predictions:
+    for i in range(len(labels)):
+        l = labels[i]
+        p = predictions[i]
         if l == 0 and p == 0:
             spec_count = spec_count + 1
         if l == 1 and p == 1:
