@@ -59,7 +59,86 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    col_list = ["Administrative", "Administrative_Duration", "Informational", "Informational_Duration", "ProductRelated", "ProductRelated_Duration", "BounceRates", "ExitRates", "PageValues", "SpecialDay", "Month", "OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Revenue"]
+
+    Administrative = []
+    Administrative_Duration = []
+    Informational = []
+    Informational_Duration = []
+    ProductRelated = []
+    ProductRelated_Duration = []
+    BounceRates = []
+    ExitRates = []
+    PageValues = []
+    SpecialDay = []
+    Month = []
+    OperatingSystems = []
+    Browser = []
+    Region = []
+    TrafficType = []
+    VisitorType = []
+    Weekend = []
+    Revenue = []
+
+    evidence = [
+        Administrative, Administrative_Duration, Informational, Informational_Duration, ProductRelated, ProductRelated_Duration, 
+    BounceRates, ExitRates, PageValues, SpecialDay, Month, OperatingSystems, Browser,Region, TrafficType, VisitorType, Weekend
+    ]
+
+    file = csv.DictReader(filename)
+    for column in file:
+        for i in range(len(evidence)):
+            if col_list[i] == Month:
+                print("going tru month")
+                if column[col_list[i]] == "Jan":
+                    evidence[i].append(0)
+                if column[col_list[i]] == "Feb":
+                    evidence[i].append(1)
+                if column[col_list[i]] == "Mar":
+                    evidence[i].append(2)
+                if column[col_list[i]] == "Apr":
+                    evidence[i].append(3)
+                if column[col_list[i]] == "May":
+                    evidence[i].append(4)
+                if column[col_list[i]] == "June":
+                    evidence[i].append(5)
+                if column[col_list[i]] == "Jul":
+                    evidence[i].append(6)
+                if column[col_list[i]] == "Aug":
+                    evidence[i].append(7)
+                if column[col_list[i]] == "Sep":
+                    evidence[i].append(8)
+                if column[col_list[i]] == "Oct":
+                    evidence[i].append(9)
+                if column[col_list[i]] == "Nov":
+                    evidence[i].append(10)
+                if column[col_list[i]] == "Dec":
+                    evidence[i].append(11)
+
+            elif col_list[i] == VisitorType:
+                if column[col_list[i]] == "Returning_Visitor":
+                    evidence[i].append(1)
+                else:
+                    evidence[i].append(0)
+
+            elif col_list[i] == Weekend:
+                if column[col_list[i]] == "FALSE":
+                    evidence[i].append(0)
+                else:
+                    evidence[i].append(1)
+
+            else:
+                print("going tru", col_list[i])
+                evidence[i].append(column[col_list[i]])
+            print("end")
+
+    for lbl in file:
+        if lbl['Revenue'] == "FALSE":
+            Revenue.append(0)
+        else:
+            Revenue.append(1)
+            
+    return evidence, Revenue
 
 
 def train_model(evidence, labels):
@@ -67,7 +146,10 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    kneigh = KNeighborsClassifier(n_neighbors=1)
+    trained = kneigh.fit(evidence, labels)
+    
+    return trained
 
 
 def evaluate(labels, predictions):
@@ -85,7 +167,20 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    sen_count = 0
+    spec_count = 0
+    for l, p in labels, predictions:
+        if l == 0 and p == 0:
+            spec_count = spec_count + 1
+        if l == 1 and p == 1:
+            sen_count = sen_count + 1
+
+    data_len = len(labels)
+
+    sen_rate = sen_count/data_len
+    spec_rate = spec_count/data_len
+
+    return (sen_rate, spec_rate)
 
 
 if __name__ == "__main__":
